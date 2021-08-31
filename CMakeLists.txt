@@ -8,4 +8,4 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 add_executable(ip_filter ip_filter.cpp)
 
-target_compile_features(ip_filter PUBLIC cxx_std_17)
+target_compile_features(ip_filter PUBLIC cxx_std_14)

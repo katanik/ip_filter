@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <sstream>
 
 // ("",  '.') -> [""]
 // ("11", '.') -> ["11"]
@@ -10,50 +12,71 @@
 // ("11.", '.') -> ["11", ""]
 // (".11", '.') -> ["", "11"]
 // ("11.22", '.') -> ["11", "22"]
-std::vector<std::string> split(const std::string &str, char d)
+
+using StringVector = std::vector<std::string>;
+
+StringVector split(const std::string& str, char delim)
 {
-    std::vector<std::string> r;
+    StringVector result;
+    std::stringstream ss;
+    ss<<str;
 
-    std::string::size_type start = 0;
-    std::string::size_type stop = str.find_first_of(d);
-    while(stop != std::string::npos)
+    for(std::string ipPart; std::getline(ss, ipPart, '.');)
     {
-        r.push_back(str.substr(start, stop - start));
-
-        start = stop + 1;
-        stop = str.find_first_of(d, start);
+        result.push_back(ipPart);
     }
 
-    r.push_back(str.substr(start));
+    return result;
+}
 
-    return r;
+void printOut(StringVector ip, char delim)
+{
+    if (ip.empty())
+        return;
+
+    auto lastIpPart = ip.back();
+    ip.pop_back();
+
+    for(auto ipPart : ip)
+    {
+        std::cout << ipPart << delim;
+    }
+
+    std::cout << lastIpPart;
 }
 
 int main(int argc, char const *argv[])
 {
     try
     {
-        std::vector<std::vector<std::string> > ip_pool;
+        std::vector<StringVector> ipPool;
 
         for(std::string line; std::getline(std::cin, line);)
         {
-            std::vector<std::string> v = split(line, '\t');
-            ip_pool.push_back(split(v.at(0), '.'));
+            ipPool.push_back(split(line, '.'));
         }
 
-        // TODO reverse lexicographically sort
-
-        for(std::vector<std::vector<std::string> >::const_iterator ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip)
+        auto filter = [](const auto& ip1, const auto& ip2)
         {
-            for(std::vector<std::string>::const_iterator ip_part = ip->cbegin(); ip_part != ip->cend(); ++ip_part)
+            auto it1 = ip1.begin(), it2 = ip2.begin();
+            for (; it1 != ip1.end() && it2 != ip2.end(); ++it1, ++it2)
             {
-                if (ip_part != ip->cbegin())
-                {
-                    std::cout << ".";
+                auto ipPart1 = stoi(*it1);
+                auto ipPart2 = stoi(*it2);
+                if (ipPart1 == ipPart2)
+                    continue;
 
-                }
-                std::cout << *ip_part;
+                return ipPart1 > ipPart2;    
             }
+
+            return ip1.size() > ip2.size(); 
+        };
+
+        std::sort(ipPool.begin(), ipPool.end(), filter);
+
+        for(const auto& ip : ipPool)
+        {
+            printOut(ip, '.');
             std::cout << std::endl;
         }
 
