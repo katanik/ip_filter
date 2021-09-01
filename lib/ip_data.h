@@ -14,7 +14,7 @@ public:
     std::string at(size_t index) const;
 
     void printOut(std::ostream& out, char delim) const;
-    bool operator<(const IpData& ip);
+    bool operator<(const IpData& ip) const;
 
 private:
     std::vector<std::string> m_data;
