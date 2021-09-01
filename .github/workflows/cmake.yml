@@ -16,7 +16,10 @@ jobs:
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
     - uses: actions/checkout@v2
@@ -37,7 +40,7 @@ jobs:
         dest: ip_filter-${{ runner.os }}.zip
 
     - name: Create Release ${{ runner.os }}
-      id: create_release_for_linux
+      id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ github.token }}
@@ -50,7 +53,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        upload_url: ${{ steps.create_release_for_linux.outputs.upload_url }}
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./ip_filter-${{ runner.os }}.zip
         asset_name: ip_filter-${{ runner.os }}-${{ github.run_number }}.zip
         asset_content_type: application/zip
