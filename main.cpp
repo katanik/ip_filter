@@ -1,5 +1,4 @@
 #include <cassert>
-#include <cstdlib>
 #include <iostream>
 #include <fstream>
 
@@ -24,10 +23,41 @@ int main(int argc, char const *argv[])
             return 1;
         }
 
+        // Read ip list
         IpList ipList{};
         ipList.inputData(inputFile);
+
+        // Print sorted ip list
         ipList.sort();
-        ipList.print(outputFile);
+        ipList.print(outputFile, IpFilter{});
+
+        // Print if the first bite is 1
+        IpFilter ipFilter1{};
+        ipFilter1.addCheckFunctions(
+            [](const IpData& ip) { return stoi(ip.at(0)) == 1; });
+        ipList.print(outputFile, ipFilter1);
+
+        // Print if the first bite is 46, the second is 70
+        IpFilter ipFilter2{};
+        ipFilter2.addCheckFunctions(
+            [](const IpData& ip) { return stoi(ip.at(0)) == 46; },
+            [](const IpData& ip) { return stoi(ip.at(1)) == 70; }
+            );
+        ipList.print(outputFile, ipFilter2);
+
+        // Print if any bite is 46
+        IpFilter ipFilter3{};
+        ipFilter3.addCheckFunctions(
+            [](const IpData& ip)
+            {
+                for (int i = 0; i < 4; ++i)
+                {
+                    if (stoi(ip.at(i)) == 46)
+                        return true;
+                }
+                return false;
+            });
+        ipList.print(outputFile, ipFilter3);
     }
     catch(const std::exception &e)
     {
