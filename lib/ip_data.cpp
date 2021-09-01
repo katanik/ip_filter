@@ -25,7 +25,7 @@ void IpData::printOut(std::ostream& out, char delim) const
     out << m_data.back();
 }
 
-bool IpData::operator<(const IpData& ip)    
+bool IpData::operator<(const IpData& ip) const
 {
     auto it1 = m_data.begin();
     auto it2 = ip.m_data.begin();
