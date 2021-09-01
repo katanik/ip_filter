@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "ip_filter.h"
+#include "lib/ip_list.h"
 
 int main(int argc, char const *argv[])
 {
@@ -27,7 +27,7 @@ int main(int argc, char const *argv[])
         IpList ipList{};
         ipList.inputData(inputFile);
         ipList.sort();
-        ipList.printResult(outputFile);
+        ipList.print(outputFile);
     }
     catch(const std::exception &e)
     {
