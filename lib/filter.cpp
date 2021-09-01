@@ -1,12 +1,10 @@
 #include "filter.h"
 
+IpFilter::IpFilter(const CheckFunction& func)
+    : m_checkFunction(func)
+{}
+
 bool IpFilter::isOk(const IpData& ip) const
 {
-    for (auto checkFunction : m_aCheckFunctions)
-    {
-        if (!checkFunction(ip))
-            return false;
-    }
-
-    return true;
+    return m_checkFunction == nullptr ? true : m_checkFunction(ip);
 }
