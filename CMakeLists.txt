@@ -5,7 +5,8 @@ project(ip_filter CXX)
 option(BUILD_TESTS "Build unittests" OFF)
 
 include_directories(${PROJECT_SOURCE_DIR})
+add_subdirectory(lib)
 
-add_executable(ip_filter ip_filter.cpp)
+add_executable(ip_filter main.cpp)
 
-target_compile_features(ip_filter PUBLIC cxx_std_17)
+target_link_libraries(ip_filter lib)
