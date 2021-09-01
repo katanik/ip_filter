@@ -36,7 +36,7 @@ jobs:
     - name: Archive
       uses: papeloto/action-zip@v1
       with:
-        files: build/ip_filter
+        files: build/ip_filter build/ip_filter.exe
         dest: ip_filter-${{ runner.os }}.zip
 
     - name: Create Release ${{ runner.os }}
