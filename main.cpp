@@ -1,6 +1,7 @@
 #include <cassert>
 #include <iostream>
 #include <fstream>
+#include <ios>
 
 #include "lib/ip_list.h"
 
@@ -62,9 +63,17 @@ int main(int argc, char const *argv[])
 
         runFilters(std::cout, ipList);
     }
+    catch(const std::range_error& e)
+    {
+        std::cerr << "Range error: " << e.what() << std::endl;
+    }
+    catch(const std::ios_base::failure& e)
+    {
+        std::cerr << "Error in input/output: " << e.what() << std::endl;
+    }
     catch(const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Something was wrong:" << e.what() << std::endl;
     }
 
     return 0;

@@ -9,7 +9,7 @@ void IpData::add(const std::string& ipPart)
 
 std::string IpData::at(size_t index) const
 {
-    return index < m_data.size() ? m_data[index] : "";
+    return  m_data[index];
 }
 
 void IpData::printOut(std::ostream& out, char delim) const
