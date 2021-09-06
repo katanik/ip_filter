@@ -42,28 +42,62 @@ bool readIpList(const std::string& fileName, IpList& ipList)
 }
 
 void runTestTemplate(const std::string testResultFileName,
-                     std::function<void(IpList&)> testDataGenerator)
+                     const IpFilter& filter)
 {
     IpList ipList{};
     auto res = readIpList("ip_filter.tsv", ipList);
     ASSERT_EQ(res, true);
-/*
+
     std::ofstream outputFile;
     outputFile.open(resultFileName, std::fstream::out);
     ASSERT_EQ(outputFile.is_open(), true);
 
-    testDataGenerator(ipList);
-    ipList.print(outputFile, IpFilter{});
-    ASSERT_EQ(compareFiles(testResultFileName, resultFileName), true);*/
+    ipList.print(outputFile, filter);
+    ASSERT_EQ(compareFiles(testResultFileName, resultFileName), true);
 }
 
 TEST(SortTest, simple)
 {
-    runTestTemplate("./generated/sort_test_result.txt",
-        [](IpList& ipList)
-        {
-            // Print sorted ip list
-            ipList.sort();
-        }
-    );
+    IpList ipList{};
+    auto res = readIpList("ip_filter.tsv", ipList);
+    ASSERT_EQ(res, true);
+
+    std::ofstream outputFile;
+    outputFile.open(resultFileName, std::fstream::out);
+    ASSERT_EQ(outputFile.is_open(), true);
+
+    ipList.sort();
+    ipList.print(outputFile, IpFilter{});
+    ASSERT_EQ(compareFiles("sort_test_result.txt", resultFileName), true);
+}
+
+TEST(Filter1Test, simple)
+{
+    runTestTemplate("f1_result.txt",
+        IpFilter{ [](const IpData& ip) { return ip.at(0) == 1; }});
+}
+
+TEST(Filter2Test, simple)
+{
+    runTestTemplate("f2_result.txt",
+        IpFilter{ 
+                [](const IpData& ip)
+                {
+                    return ip.at(0) == 46 && ip.at(1) == 70;
+                }});
+}
+
+TEST(Filter3Test, simple)
+{
+    runTestTemplate("f3_result.txt",
+        IpFilter{ 
+            [](const IpData& ip)
+            {
+                for (int i = 0; i < 4; ++i)
+                {
+                    if (ip.at(i) == 46)
+                        return true;
+                }
+                return false;
+            }});
 }

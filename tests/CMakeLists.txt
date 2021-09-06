@@ -8,8 +8,11 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-configure_file( sort_test_result.txt ${CMAKE_BINARY_DIR}/generated/sort_test_result.txt )
-configure_file( sort_test_result.txt ${CMAKE_BINARY_DIR}/ip_filter.tsv )
+configure_file( sort_test_result.txt ${CMAKE_BINARY_DIR}/tests/sort_test_result.txt )
+configure_file( sort_test_result.txt ${CMAKE_BINARY_DIR}/tests/ip1_result.txt )
+configure_file( sort_test_result.txt ${CMAKE_BINARY_DIR}/tests/ip2_result.txt )
+configure_file( sort_test_result.txt ${CMAKE_BINARY_DIR}/tests/ip3_result.txt )
+configure_file( sort_test_result.txt ${CMAKE_BINARY_DIR}/tests/ip_result.tsv )
 
 add_executable(ip_filter-tests test_ip_filter.cpp)
 
