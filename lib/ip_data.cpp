@@ -2,14 +2,14 @@
 
 #include "ip_data.h"
 
-void IpData::add(const std::string& ipPart)
+void IpData::add(const IpPart& ipPart)
 {
     m_data.push_back(ipPart);
 }
 
-std::string IpData::at(size_t index) const
+IpPart IpData::at(size_t index) const
 {
-    return index < m_data.size() ? m_data[index] : "";
+    return  m_data[index];
 }
 
 void IpData::printOut(std::ostream& out, char delim) const
@@ -31,8 +31,8 @@ bool IpData::operator<(const IpData& ip) const
     auto it2 = ip.m_data.begin();
     for (; it1 != m_data.end() && it2 != ip.m_data.end(); ++it1, ++it2)
     {
-        auto ipPart1 = stoi(*it1);
-        auto ipPart2 = stoi(*it2);
+        const auto& ipPart1 = *it1;
+        const auto& ipPart2 = *it2;
         if (ipPart1 == ipPart2)
             continue;
 
@@ -48,9 +48,9 @@ IpData split(const std::string& str, char delim)
     std::stringstream ss;
     ss<<str;
 
-    for(std::string ipPart; std::getline(ss, ipPart, delim);)
+    for(std::string ipPartStr; std::getline(ss, ipPartStr, delim);)
     {
-        result.add(ipPart);
+        result.add(stoi(ipPartStr));
     }
 
     return result;
