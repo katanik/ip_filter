@@ -10,21 +10,18 @@ static const std::string resultFileName = "result.txt";
 
 bool compareFiles(const std::string& name1, const std::string& name2)
 {
-    std::ifstream f1(name1, std::ifstream::binary|std::ifstream::ate);
-    std::ifstream f2(name2, std::ifstream::binary|std::ifstream::ate);
+    std::ifstream file1(name1, std::ifstream::in);
+    std::ifstream file2(name2, std::ifstream::in);
 
-    if (f1.fail() || f2.fail())
-        return false; //file problem
+    std::string str1;
+    std::string str2;
+    while (std::getline(file1, str1) && std::getline(file2, str2))
+    {
+        if (str1 != str2)
+            return false;
+    }
 
-    if (f1.tellg() != f2.tellg())
-        return false; //size mismatch
-
-    //seek back to beginning and use std::equal to compare contents
-    f1.seekg(0, std::ifstream::beg);
-    f2.seekg(0, std::ifstream::beg);
-    return std::equal(std::istreambuf_iterator<char>(f1.rdbuf()),
-                      std::istreambuf_iterator<char>(),
-                      std::istreambuf_iterator<char>(f2.rdbuf()));
+    return !std::getline(file2, str2) && !std::getline(file1, str1);
 }
 
 bool readIpList(const std::string& fileName, IpList& ipList)
@@ -45,30 +42,29 @@ void runTestTemplate(const std::string testResultFileName,
                      const IpFilter& filter)
 {
     IpList ipList{};
-    auto res = readIpList("ip_filter.tsv", ipList);
-    ASSERT_EQ(res, true);
+    ASSERT_TRUE(readIpList("ip_filter.tsv", ipList));
 
     std::ofstream outputFile;
     outputFile.open(resultFileName, std::fstream::out);
-    ASSERT_EQ(outputFile.is_open(), true);
-
+    ASSERT_TRUE(outputFile.is_open());
     ipList.print(outputFile, filter);
-    ASSERT_EQ(compareFiles(testResultFileName, resultFileName), true);
+    outputFile.close();
+
+    ASSERT_TRUE(compareFiles(testResultFileName, resultFileName));
 }
 
 TEST(SortTest, simple)
 {
     IpList ipList{};
-    auto res = readIpList("ip_filter.tsv", ipList);
-    ASSERT_EQ(res, true);
+    ASSERT_TRUE(readIpList("ip_filter.tsv", ipList));
 
     std::ofstream outputFile;
     outputFile.open(resultFileName, std::fstream::out);
-    ASSERT_EQ(outputFile.is_open(), true);
+    ASSERT_TRUE(outputFile.is_open());
 
     ipList.sort();
     ipList.print(outputFile, IpFilter{});
-    ASSERT_EQ(compareFiles("sort_test_result.txt", resultFileName), true);
+    ASSERT_TRUE(compareFiles("sort_test_result.txt", resultFileName));
 }
 
 TEST(Filter1Test, simple)
