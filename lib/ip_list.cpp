@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <algorithm>
+#include <sstream>
 
 #include "ip_list.h"
 
@@ -11,10 +12,12 @@ void IpList::sort()
 void IpList::inputData(std::istream& in)
 {
     m_list.clear();
-    for(std::string line; std::getline(in, line);)
+    for(std::string line, usefulStr; std::getline(in, line);)
     {
-        auto ip = split(line, '\t');
-        m_list.push_back(split(ip.at(0), '.'));
+        std::stringstream ss;
+        ss << line;
+        std::getline(ss, usefulStr, '\t');
+        m_list.push_back(split(usefulStr, '.'));
     }
 }
 

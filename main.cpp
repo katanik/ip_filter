@@ -1,6 +1,7 @@
 #include <cassert>
 #include <iostream>
 #include <fstream>
+#include <ios>
 
 #include "lib/ip_list.h"
 
@@ -11,14 +12,14 @@ void runFilters(std::ostream& out, IpList& ipList)
     ipList.print(out, IpFilter{});
 
     // Print if the first bite is 1
-    IpFilter ipFilter1{ [](const IpData& ip) { return stoi(ip.at(0)) == 1; }};
+    IpFilter ipFilter1{ [](const IpData& ip) { return ip.at(0) == 1; }};
     ipList.print(out, ipFilter1);
 
     // Print if the first bite is 46, the second is 70
     IpFilter ipFilter2{ 
         [](const IpData& ip)
         {
-            return stoi(ip.at(0)) == 46 && stoi(ip.at(1)) == 70;
+            return ip.at(0) == 46 && ip.at(1) == 70;
         }};
     ipList.print(out, ipFilter2);
 
@@ -28,7 +29,7 @@ void runFilters(std::ostream& out, IpList& ipList)
         {
             for (int i = 0; i < 4; ++i)
             {
-                if (stoi(ip.at(i)) == 46)
+                if (ip.at(i) == 46)
                     return true;
             }
             return false;
@@ -62,9 +63,17 @@ int main(int argc, char const *argv[])
 
         runFilters(std::cout, ipList);
     }
+    catch(const std::range_error& e)
+    {
+        std::cerr << "Range error: " << e.what() << std::endl;
+    }
+    catch(const std::ios_base::failure& e)
+    {
+        std::cerr << "Error in input/output: " << e.what() << std::endl;
+    }
     catch(const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Something was wrong:" << e.what() << std::endl;
     }
 
     return 0;
